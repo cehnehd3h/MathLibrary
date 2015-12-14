@@ -1,2 +1,2 @@
 # MathLibrary
-SIMD vector math library
+SIMD linear algebra math library
