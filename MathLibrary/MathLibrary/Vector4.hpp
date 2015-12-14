@@ -78,18 +78,18 @@ namespace math
 
     inline float Vector4::Dot(const Vector4 &lhs, const Vector4 &rhs)
     {
-        auto vd = _mm_mul_ps(lhs.m_simd128, rhs.m_simd128); // multiply them together, x is stored in element 0
-        auto z = _mm_movehl_ps(vd, vd);                     // move element 3 into element 0 of this vector
-        auto y = _mm_shuffle_ps(vd, vd, 0x55);              // move element 1 into element 0 for this vector
+        auto mul = _mm_mul_ps(lhs.m_simd128, rhs.m_simd128);        // multiply them together, x is stored in element 0
+        auto yPart = _mm_shuffle_ps(mul, mul, 0x55);                // move element 1 into element 0 for this vector
+        auto zPart = _mm_movehl_ps(mul, mul);                       // move element 2 into element 0 of this vector
 
-        // add the first element in vd (x) and the first element of y (y)
-        vd = _mm_add_ss(vd, y);
+        // add the first element in mul (x) and the first element of yPart (y)
+        mul = _mm_add_ss(mul, yPart);
 
         // add the z to our current sum
-        vd = _mm_add_ss(vd, z);
+        mul = _mm_add_ss(mul, zPart);
 
-        // return the first element of vd
-        return _mm_cvtss_f32(vd);
+        // return the first element of mul
+        return _mm_cvtss_f32(mul);
     }
 
     inline float Vector4::Distance(const Vector4 &rhs) const
